@@ -29,9 +29,12 @@ protected:
 	void GASInputReleased(int32 InputId);
 
 protected:
-	UPROPERTY(EditAnywhere, Category = "GAS")
+	UPROPERTY(EditAnywhere, Category = GAS)
 	TObjectPtr<class UAbilitySystemComponent> ASC;
 
-	UPROPERTY(EditAnywhere, Category="GAS")
+	UPROPERTY(EditAnywhere, Category = GAS)
 	TArray<TSubclassOf<class UGameplayAbility>> StartAbilities;
+
+	UPROPERTY(EditAnywhere, Category = GAS)
+	TMap<int32, TSubclassOf<class UGameplayAbility>> StartInputAbilities;
 };

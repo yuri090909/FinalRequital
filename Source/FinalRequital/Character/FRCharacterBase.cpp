@@ -69,8 +69,6 @@ void AFRCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 	if (UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(PlayerInputComponent))
 	{
-		EnhancedInput->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
-		EnhancedInput->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 		EnhancedInput->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AFRCharacterBase::Move);
 		EnhancedInput->BindAction(LookAction, ETriggerEvent::Triggered, this, &AFRCharacterBase::Look);
 	}

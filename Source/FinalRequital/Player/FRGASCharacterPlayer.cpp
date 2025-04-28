@@ -23,15 +23,23 @@ void AFRGASCharacterPlayer::PossessedBy(AController* NewController)
 		ASC = GASPS->GetAbilitySystemComponent();
 		ASC->InitAbilityActorInfo(GASPS, this);
 
-		int32 InputId = 0;
 		for(const auto& StartAbility : StartAbilities)
 		{
 			FGameplayAbilitySpec StartSpec(StartAbility);
-			StartSpec.InputID = InputId++;
 			ASC->GiveAbility(StartSpec);
-
-			SetupGASInputComponent();
 		}
+		for (const auto& StartInputAbility : StartInputAbilities)
+		{
+			FGameplayAbilitySpec StartSpec(StartInputAbility.Value);
+			StartSpec.InputID = StartInputAbility.Key;
+			ASC->GiveAbility(StartSpec);
+		}
+
+		SetupGASInputComponent();
+
+		// 게임어빌리티 디버그 콘솔 커맨드
+		APlayerController* PlayerController = CastChecked<APlayerController>(NewController);
+		PlayerController->ConsoleCommand(TEXT("showdebug abilitysystem"));
 	}
 }
 
@@ -49,6 +57,7 @@ void AFRGASCharacterPlayer::SetupGASInputComponent()
 
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &AFRGASCharacterPlayer::GASInputPressed,0);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &AFRGASCharacterPlayer::GASInputReleased,0);
+		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AFRGASCharacterPlayer::GASInputPressed, 1);
 	}
 }
 

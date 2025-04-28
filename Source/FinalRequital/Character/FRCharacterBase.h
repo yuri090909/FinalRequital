@@ -19,6 +19,13 @@ class FINALREQUITAL_API AFRCharacterBase : public ACharacter
 public:
 	AFRCharacterBase();
 
+public:
+
+	FORCEINLINE virtual UAnimMontage* GetComboActionMontage() const { return ComboActionMontage; }
+	FORCEINLINE class UFRMeleeComboData* GetComboActionData() const { return ComboActionData; }
+
+	FORCEINLINE USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
+	FORCEINLINE UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -50,7 +57,11 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UInputAction> UltimateAttackAction;
 
-public:
-	FORCEINLINE USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
-	FORCEINLINE UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	TObjectPtr<class UAnimMontage> ComboActionMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UFRMeleeComboData> ComboActionData;
+
+
 };
