@@ -41,6 +41,9 @@ AFRCharacterBase::AFRCharacterBase()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false;
 
+	//temp
+	Sword = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Weapon"));
+	Sword->SetupAttachment(GetMesh(), TEXT("hand_rSocket")); //소켓이름지정
 }
 
 void AFRCharacterBase::BeginPlay()

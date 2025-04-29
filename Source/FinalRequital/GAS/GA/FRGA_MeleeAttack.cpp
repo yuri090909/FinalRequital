@@ -6,6 +6,7 @@
 #include "FRDebugHelper.h"
 #include "Character/FRCharacterBase.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
+#include "GAS/FRMeleeComboData.h"
 
 UFRGA_MeleeAttack::UFRGA_MeleeAttack()
 {
@@ -17,6 +18,15 @@ void UFRGA_MeleeAttack::InputPressed(const FGameplayAbilitySpecHandle Handle,
 {
 	Super::InputPressed(Handle, ActorInfo, ActivationInfo);
 	D(FString::Printf(TEXT("TRIGGER!")));
+
+	if(!ComboTimerHandle.IsValid())
+	{
+		HasNextComboInput = false;
+	}
+	else
+	{
+		HasNextComboInput = true;
+	}
 }
 
 void UFRGA_MeleeAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
@@ -25,12 +35,16 @@ void UFRGA_MeleeAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 	AFRCharacterBase* FRCharacterBase = CastChecked<AFRCharacterBase>(ActorInfo->AvatarActor.Get());
+	CurrentComboData = FRCharacterBase->GetComboActionData();
 	FRCharacterBase->GetCharacterMovement()->SetMovementMode(MOVE_None);
 
-	UAbilityTask_PlayMontageAndWait* PlayAttackTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("PlayMeleeAttack"), FRCharacterBase->GetComboActionMontage());
+	UAbilityTask_PlayMontageAndWait* PlayAttackTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy
+	(this, TEXT("PlayMeleeAttack"), FRCharacterBase->GetComboActionMontage(),1.0f,GetNextSection());
 	PlayAttackTask->OnCompleted.AddDynamic(this, &UFRGA_MeleeAttack::OnCompleteCallback);
 	PlayAttackTask->OnInterrupted.AddDynamic(this, &UFRGA_MeleeAttack::OnInterruptedCallback);
 	PlayAttackTask->ReadyForActivation();
+
+	StartComboTimer();
 }
 
 void UFRGA_MeleeAttack::CancelAbility(const FGameplayAbilitySpecHandle Handle,
@@ -46,6 +60,10 @@ void UFRGA_MeleeAttack::EndAbility(const FGameplayAbilitySpecHandle Handle, cons
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 	AFRCharacterBase* FRCharacterBase = CastChecked<AFRCharacterBase>(ActorInfo->AvatarActor.Get());
 	FRCharacterBase->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+
+	CurrentComboData = nullptr;
+	CurrentCombo = 0;
+	HasNextComboInput = false;
 }
 
 void UFRGA_MeleeAttack::OnCompleteCallback()
@@ -60,4 +78,34 @@ void UFRGA_MeleeAttack::OnInterruptedCallback()
 	bool bReplicatedEndAbility = true;
 	bool bWasCancelled = true;
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, bReplicatedEndAbility, bWasCancelled);
+}
+
+FName UFRGA_MeleeAttack::GetNextSection()
+{
+	CurrentCombo = FMath::Clamp(CurrentCombo + 1, 1, CurrentComboData->MaxComboCount);
+	FName NextSection = *FString::Printf(TEXT("%s%d"), *CurrentComboData->MontageSectionNamePrefix, CurrentCombo);
+	return NextSection;
+}
+
+void UFRGA_MeleeAttack::StartComboTimer()
+{
+	int32 ComboIndex = CurrentCombo - 1;
+	ensure(CurrentComboData->EffectiveFrameCount.IsValidIndex(ComboIndex));
+
+	const float ComboEffectiveTime = CurrentComboData->EffectiveFrameCount[ComboIndex] / CurrentComboData->FrameRate;
+	if(ComboEffectiveTime>0.0f)
+	{
+		GetWorld()->GetTimerManager().SetTimer(ComboTimerHandle, this, &UFRGA_MeleeAttack::CheckComboInput, ComboEffectiveTime, false);
+	}
+}
+
+void UFRGA_MeleeAttack::CheckComboInput()
+{
+	ComboTimerHandle.Invalidate();
+	if(HasNextComboInput)
+	{
+		MontageJumpToSection(GetNextSection());
+		StartComboTimer();
+		HasNextComboInput = false;
+	}
 }

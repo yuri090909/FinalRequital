@@ -30,4 +30,15 @@ protected:
 
 	UFUNCTION()
 	void OnInterruptedCallback();
+
+	FName GetNextSection();
+	void StartComboTimer();
+	void CheckComboInput();
+
+	UPROPERTY()
+	TObjectPtr<class UFRMeleeComboData> CurrentComboData;
+
+	uint8 CurrentCombo = 0;
+	FTimerHandle ComboTimerHandle;
+	bool HasNextComboInput = false;
 };
