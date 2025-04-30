@@ -12,19 +12,22 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "Player/FRPlayerController.h"
-
+#include "Physics/FRCollision.h"
 
 AFRCharacterBase::AFRCharacterBase()
 {
-	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
-
+	// Pawn
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = true;
 	bUseControllerRotationRoll = false;
 
+	// Capsule
+	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
+	GetCapsuleComponent()->SetCollisionProfileName(CPROFILE_FRCAPSULE);
+
+	// Movement
 	GetCharacterMovement()->bOrientRotationToMovement = false;
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f);
-
 	GetCharacterMovement()->JumpZVelocity = 500.f;
 	GetCharacterMovement()->AirControl = 0.35f;
 	GetCharacterMovement()->MaxWalkSpeed = 500.f;
@@ -32,6 +35,12 @@ AFRCharacterBase::AFRCharacterBase()
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
 	GetCharacterMovement()->BrakingDecelerationFalling = 1500.0f;
 
+	// Mesh
+	GetMesh()->SetRelativeLocationAndRotation(FVector(0.0f, 0.0f, -100.0f), FRotator(0.0f, -90.0f, 0.0f));
+	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
+	GetMesh()->SetCollisionProfileName(TEXT("NoCollision"));
+
+	// Camera
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
 	CameraBoom->TargetArmLength = 400.0f;
@@ -41,7 +50,7 @@ AFRCharacterBase::AFRCharacterBase()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false;
 
-	//temp
+	//Temp
 	Sword = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Weapon"));
 	Sword->SetupAttachment(GetMesh(), TEXT("hand_rSocket")); //소켓이름지정
 }
