@@ -3,27 +3,30 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/PlayerState.h"
 #include "AbilitySystemInterface.h"
-#include "FRPlayerState.generated.h"
+#include "GameFramework/Character.h"
+#include "FRMonsterBase.generated.h"
 
-/**
- * 
- */
 UCLASS()
-class FINALREQUITAL_API AFRPlayerState : public APlayerState, public IAbilitySystemInterface
+class FINALREQUITAL_API AFRMonsterBase : public ACharacter , public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 
 public:
-	AFRPlayerState();
+
+	AFRMonsterBase();
 
 	virtual class UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+	virtual void PossessedBy(AController* NewController) override;
 
 protected:
-	UPROPERTY(EditAnywhere, Category="GAS")
+	virtual void BeginPlay() override;
+
+	UPROPERTY(EditAnywhere, Category = GAS)
 	TObjectPtr<class UAbilitySystemComponent> ASC;
 
 	UPROPERTY()
 	TObjectPtr<class UFRCharacterAttributeSet> AttributeSet;
+public:	
+
 };

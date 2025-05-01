@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "GAS/AT/FRAT_Trace.h"
@@ -43,6 +43,8 @@ void UFRAT_Trace::SpawnAndInitializeTargetActor()
 	if(SpawnedTargetActor)
 	{
 		SpawnedTargetActor->SetShowDebug(true);
+
+		// 스폰액터에 데이타가 레디되면 호출할 콜백 델리게이트 등록
 		SpawnedTargetActor->TargetDataReadyDelegate.AddUObject(this, &UFRAT_Trace::OnTargetDataReadyCallback);
 	}
 }
@@ -66,6 +68,7 @@ void UFRAT_Trace::OnTargetDataReadyCallback(const FGameplayAbilityTargetDataHand
 {
 	if (ShouldBroadcastAbilityTaskDelegates())
 	{
+		// OnComplete 델리게이트는 다시 밀리어택히트체크 게임 어빌리티에 데이터핸들 정보 전달
 		OnComplete.Broadcast(DataHandle);
 	}
 	

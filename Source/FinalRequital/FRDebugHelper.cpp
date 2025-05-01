@@ -2,3 +2,5 @@
 
 
 #include "FRDebugHelper.h"
+
+DEFINE_LOG_CATEGORY(FRLOG);

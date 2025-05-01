@@ -8,7 +8,12 @@
 #include "AN_GASMeleeAttackHitCheck.generated.h"
 
 /**
- * 
+ * UFRGA_MeleeAttackHitCheck
+   ¦¦¢º UFRAT_Trace (AbilityTask)
+          ¦¦¢º AFRTA_Trace (TargetActor)
+                ¦¦¢º TargetData »ý¼º + Broadcast
+          ¦¦¢¸ OnTargetDataReadyCallback ¡æ OnComplete.Broadcast
+   ¢¸¦¡¦¡ OnTraceResultCallback(DataHandle)
  */
 UCLASS()
 class FINALREQUITAL_API UAN_GASMeleeAttackHitCheck : public UAnimNotify
