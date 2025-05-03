@@ -27,6 +27,11 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<class UFRCharacterAttributeSet> AttributeSet;
-public:	
 
+public:
+	UPROPERTY(EditAnywhere, Category = GAS)
+	TSubclassOf<class UGameplayEffect> InitStatEffect;
+
+	UPROPERTY(EditAnywhere, Category = GAS)
+	float Level;
 };

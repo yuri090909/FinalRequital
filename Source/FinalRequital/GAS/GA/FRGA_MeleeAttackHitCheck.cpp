@@ -18,7 +18,9 @@ void UFRGA_MeleeAttackHitCheck::ActivateAbility(const FGameplayAbilitySpecHandle
 	const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
-	//D(FString::Printf(TEXT("TRIGGER1!")));
+
+	//콤보 현재 레벨을 에님노티파이에서 페이로드 데이터로부터 가저온 것으로 적용
+	CurrentLevel = TriggerEventData->EventMagnitude;
 
 	UFRAT_Trace* AttackTraceTask = UFRAT_Trace::CreateTask(this, AFRTA_Trace::StaticClass());
 	AttackTraceTask->OnComplete.AddDynamic(this, &UFRGA_MeleeAttackHitCheck::OnTraceResultCallback);
@@ -35,6 +37,9 @@ void UFRGA_MeleeAttackHitCheck::OnTraceResultCallback(const FGameplayAbilityTarg
 		D(FString::Printf(TEXT("Target: %s Detected"), *(HitResult.GetActor()->GetName())));
 
 		UAbilitySystemComponent* SourceASC = GetAbilitySystemComponentFromActorInfo_Checked();
+		const UFRCharacterAttributeSet* SourceAttribute = SourceASC->GetSet<UFRCharacterAttributeSet>();
+
+		/*
 		UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(HitResult.GetActor());
 		if(!SourceASC||!TargetASC)
 		{
@@ -55,6 +60,13 @@ void UFRGA_MeleeAttackHitCheck::OnTraceResultCallback(const FGameplayAbilityTarg
 
 		const float AttackDamage = SourceAttribute->GetAttackRate();
 		TargetAttribute->SetHealth(TargetAttribute->GetHealth() - AttackDamage);
+		*/
+		FGameplayEffectSpecHandle EffectSpecHandle = MakeOutgoingGameplayEffectSpec(AttackDamageEffect, CurrentLevel);
+		if(EffectSpecHandle.IsValid())
+		{
+			ApplyGameplayEffectSpecToTarget(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, EffectSpecHandle, TargetDataHandle);
+		}
+
 	}
 
 	bool bReplicatedEndAbility = true;

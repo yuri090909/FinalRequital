@@ -8,6 +8,8 @@
 #include "FRCharacterAttributeSet.generated.h"
 
 /*
+ *	ASC는 초기화 될 때 같은 엑터에 있는 UAttributeSet타입객체를 찾아서 등록함. 수동등록 필요X
+ *
     어트리뷰트 값을 읽고/쓰기/초기화하고, 프로퍼티 메타데이터 접근까지 한 번에 만들어주는 묶음 매크로
     GAMEPLAYATTRIBUTE_PROPERTY_GETTER(ClassName, PropertyName)    // UProperty* 반환용 Getter (메타 정보용)  
     GAMEPLAYATTRIBUTE_VALUE_GETTER(PropertyName)                  // CurrentValue 실제 값 Getter  
@@ -38,12 +40,16 @@ public:
 	ATTRIBUTE_ACCESSORS(UFRCharacterAttributeSet, MaxAttackRate);
 	ATTRIBUTE_ACCESSORS(UFRCharacterAttributeSet, Health);
 	ATTRIBUTE_ACCESSORS(UFRCharacterAttributeSet, MaxHealth);
+	ATTRIBUTE_ACCESSORS(UFRCharacterAttributeSet, Damage);
 
 	// PreAttributeChange -> 값이 실제로 적용되기 직전에 호출됨
 	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
 
 	// PostAttributeChange -> 값이 실제로 변경된 직후에 호출됨
-	virtual void PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue) override;
+	// virtual void PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue) override;
+
+	//virtual bool PreGameplayEffectExecute(struct FGameplayEffectModCallbackData& Data) override;
+	virtual void PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data) override;
 protected:
 	UPROPERTY(BlueprintReadOnly, Category="Attack", Meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData AttackRange;
@@ -64,4 +70,7 @@ protected:
 	FGameplayAttributeData Health;
 	UPROPERTY(BlueprintReadOnly, Category = "Health", Meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData MaxHealth;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Attack", Meta = (AllowPrivateAccess = true))
+	FGameplayAttributeData Damage;
 };

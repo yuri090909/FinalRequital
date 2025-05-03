@@ -5,6 +5,7 @@
 #include "AbilitySystemBlueprintLibrary.h"
 UAN_GASMeleeAttackHitCheck::UAN_GASMeleeAttackHitCheck()
 {
+	ComboAttackLevel = 1.0f;
 }
 
 FString UAN_GASMeleeAttackHitCheck::GetNotifyName_Implementation() const
@@ -22,8 +23,12 @@ void UAN_GASMeleeAttackHitCheck::Notify(USkeletalMeshComponent* MeshComp, UAnimS
 		AActor* OwnerActor = MeshComp->GetOwner();
 		if(OwnerActor)
 		{
+			// 페이로드데이터에 콤보어택래밸에 대한 정보를 추가
 			FGameplayEventData PayloadData;
-			// 에님노티파이에서 설정한 트리거게임플레이태그를 통해서 자동으로 Activate를 호출하게됨.
+			PayloadData.EventMagnitude = ComboAttackLevel;
+
+			// 에님노티파이에서 설정한 트리거게임플레이태그를 통해서 자동으로 Activate를 호출하게됨. MeleeAttackHitCheck
+			// 페이로드데이터를 함께 전달.
 			UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(OwnerActor, TriggerGameplayTag, PayloadData);
 		}
 	}
