@@ -34,4 +34,10 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = GAS)
 	float Level;
+
+	//UPROPERTY(EditAnywhere, Category = HP)
+	//TSubclassOf<class UUserWidget> HpWidgetClassRef;
+
+	UPROPERTY(EditAnywhere, Category = HP)
+	TObjectPtr<class UFRWidgetComponent> HpBar;
 };

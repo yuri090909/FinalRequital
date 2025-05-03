@@ -6,7 +6,10 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "AbilitySystemComponent.h"
+#include "FRDebugHelper.h"
 #include "Physics/FRCollision.h"
+#include "UI/FRWidgetComponent.h"
+#include "UI/FRUserWidget.h"
 
 AFRMonsterBase::AFRMonsterBase()
 {
@@ -31,10 +34,38 @@ AFRMonsterBase::AFRMonsterBase()
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
 	GetMesh()->SetCollisionProfileName(TEXT("NoCollision"));
 
-	//ASC
+	// ASC
 	ASC = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("ASC"));
 	AttributeSet = CreateDefaultSubobject<UFRCharacterAttributeSet>(TEXT("AttributeSet"));
+
+	// HP UI
+	HpBar = CreateDefaultSubobject<UFRWidgetComponent>(TEXT("Widget"));
+	HpBar->SetupAttachment(GetMesh());
+	HpBar->SetRelativeLocation(FVector(0.0f, 0.0f, 180.0f));
+	static ConstructorHelpers::FClassFinder<UUserWidget> HpWidgetRef(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WBP_HpBar.WBP_HpBar_C'"));
+	if (HpWidgetRef.Succeeded())
+	{
+		HpBar->SetWidgetClass(HpWidgetRef.Class); 
+		HpBar->SetWidgetSpace(EWidgetSpace::Screen);
+		HpBar->SetDrawSize(FVector2D(200.0f, 20.f));
+		HpBar->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
 	Level = 1;
+}
+void AFRMonsterBase::BeginPlay()
+{
+	Super::BeginPlay();
+
+	/*if (HpWidgetClassRef)
+	{
+		HpBar->SetWidgetClass(HpWidgetClassRef);
+		HpBar->SetWidgetSpace(EWidgetSpace::Screen);
+		HpBar->SetDrawSize(FVector2D(200.0f, 20.f));
+		HpBar->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+		HpBar->InitWidget();
+	}*/
+	
 }
 
 class UAbilitySystemComponent* AFRMonsterBase::GetAbilitySystemComponent() const
@@ -63,11 +94,6 @@ void AFRMonsterBase::PossessedBy(AController* NewController)
 		// GA발동하지 않고 이펙트를 스스로 발동시켜 스탯을 변경함.
 		ASC->BP_ApplyGameplayEffectSpecToSelf(EffectSpecHandle);
 	}
-}
 
-void AFRMonsterBase::BeginPlay()
-{
-	Super::BeginPlay();
-	
 }
 

@@ -5,11 +5,15 @@
 #include "AbilitySystemComponent.h"
 #include "Player/FRPlayerState.h"
 #include "EnhancedInputComponent.h"
+#include "UI/FRWidgetComponent.h"
+#include "UI/FRUserWidget.h"
 
 AFRGASCharacterPlayer::AFRGASCharacterPlayer()
 {
 	// ASC는 플레이어스테트에서 관리
 	ASC = nullptr;
+
+	HpBar = CreateDefaultSubobject<UFRWidgetComponent>(TEXT("Widget"));
 }
 
 void AFRGASCharacterPlayer::PossessedBy(AController* NewController)
