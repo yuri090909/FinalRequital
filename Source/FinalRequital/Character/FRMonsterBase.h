@@ -38,6 +38,16 @@ public:
 	//UPROPERTY(EditAnywhere, Category = HP)
 	//TSubclassOf<class UUserWidget> HpWidgetClassRef;
 
-	UPROPERTY(EditAnywhere, Category = HP)
+	UFUNCTION()
+	virtual void OnOutOfHealth();
+
+	UPROPERTY(EditAnywhere, Category = Stat)
 	TObjectPtr<class UFRWidgetComponent> HpBar;
+
+	//Dead Section
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Stat, Meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UAnimMontage> DeadMontage;
+	void SetDead();
+	void PlayDeadAnimation() const;
+	float DeadEventDelayTime = 5.0f;
 };

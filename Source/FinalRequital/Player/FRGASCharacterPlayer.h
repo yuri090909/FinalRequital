@@ -24,6 +24,7 @@ public:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
 protected:
+
 	void SetupGASInputComponent();
 	void GASInputPressed(int32 InputId);
 	void GASInputReleased(int32 InputId);

@@ -22,6 +22,7 @@
  	GAMEPLAYATTRIBUTE_VALUE_SETTER(PropertyName) \
  	GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOutOfHealthDelegate);
 
 UCLASS()
 class FINALREQUITAL_API UFRCharacterAttributeSet : public UAttributeSet
@@ -48,8 +49,14 @@ public:
 	// PostAttributeChange -> 값이 실제로 변경된 직후에 호출됨
 	// virtual void PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue) override;
 
-	//virtual bool PreGameplayEffectExecute(struct FGameplayEffectModCallbackData& Data) override;
+	virtual bool PreGameplayEffectExecute(struct FGameplayEffectModCallbackData& Data) override;
+
 	virtual void PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data) override;
+
+	// 사용하는 ASC에서 특정 어트리뷰트를 접근할 때 가져오는 GetSet함수는 const로 선언되있음.
+	// 이 Delegate를 연동하려하면 const를 위반하기 때문에 const cast 대신 mutable 키워드로 const에서 열외시킴.
+	mutable FOutOfHealthDelegate OnOutOfHealth;
+
 protected:
 	UPROPERTY(BlueprintReadOnly, Category="Attack", Meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData AttackRange;
@@ -73,4 +80,6 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Attack", Meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData Damage;
+
+	bool bOutOfHealth = false;
 };

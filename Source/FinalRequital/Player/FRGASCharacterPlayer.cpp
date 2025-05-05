@@ -5,6 +5,7 @@
 #include "AbilitySystemComponent.h"
 #include "Player/FRPlayerState.h"
 #include "EnhancedInputComponent.h"
+#include "FRDebugHelper.h"
 #include "UI/FRWidgetComponent.h"
 #include "UI/FRUserWidget.h"
 
@@ -44,6 +45,7 @@ void AFRGASCharacterPlayer::PossessedBy(AController* NewController)
 		// 게임어빌리티 디버그 콘솔 커맨드
 		APlayerController* PlayerController = CastChecked<APlayerController>(NewController);
 		PlayerController->ConsoleCommand(TEXT("showdebug abilitysystem"));
+		//FR_LOG(FRLOG, Warning, TEXT("Rotation: %s"), *GetActorRotation().ToString());
 	}
 }
 

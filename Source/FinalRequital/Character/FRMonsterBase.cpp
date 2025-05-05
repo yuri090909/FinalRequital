@@ -67,7 +67,6 @@ void AFRMonsterBase::BeginPlay()
 	}*/
 	
 }
-
 class UAbilitySystemComponent* AFRMonsterBase::GetAbilitySystemComponent() const
 {
 	return ASC;
@@ -77,6 +76,7 @@ void AFRMonsterBase::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 	ASC->InitAbilityActorInfo(this, this);
+	AttributeSet->OnOutOfHealth.AddDynamic(this, &ThisClass::OnOutOfHealth);
 
 	// [게임플레이 이펙트 생성 과정]
 	// 게임플레이 이펙트 컨텍스트와 게임플레이 이펙트 스펙을 통해 생성 가능
@@ -95,5 +95,32 @@ void AFRMonsterBase::PossessedBy(AController* NewController)
 		ASC->BP_ApplyGameplayEffectSpecToSelf(EffectSpecHandle);
 	}
 
+}
+
+void AFRMonsterBase::OnOutOfHealth()
+{
+	SetDead();
+}
+
+void AFRMonsterBase::SetDead()
+{
+	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
+	PlayDeadAnimation();
+	SetActorEnableCollision(false);
+
+	FTimerHandle DeadTimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(DeadTimerHandle, FTimerDelegate::CreateLambda(
+		[&]()
+		{
+			Destroy();
+		}
+	), DeadEventDelayTime, false);
+}
+
+void AFRMonsterBase::PlayDeadAnimation() const
+{
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	AnimInstance->StopAllMontages(0.0f);
+	AnimInstance->Montage_Play(DeadMontage, 1.0f);
 }
 
