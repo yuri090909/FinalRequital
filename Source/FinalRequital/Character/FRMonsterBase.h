@@ -44,6 +44,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = Stat)
 	TObjectPtr<class UFRWidgetComponent> HpBar;
 
+	UPROPERTY(EditAnywhere, Category = Stat)
+	float WalkMaxSpeed = 200.0f;
+
 	//Dead Section
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Stat, Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UAnimMontage> DeadMontage;

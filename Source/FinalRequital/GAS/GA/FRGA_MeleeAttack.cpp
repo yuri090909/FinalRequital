@@ -17,7 +17,7 @@ void UFRGA_MeleeAttack::InputPressed(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo)
 {
 	Super::InputPressed(Handle, ActorInfo, ActivationInfo);
-	D(FString::Printf(TEXT("TRIGGER!")));
+	//D(FString::Printf(TEXT("TRIGGER!")));
 
 	if(!ComboTimerHandle.IsValid())
 	{

@@ -24,7 +24,7 @@ AFRMonsterBase::AFRMonsterBase()
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f);
 	GetCharacterMovement()->JumpZVelocity = 500.f;
 	GetCharacterMovement()->AirControl = 0.35f;
-	GetCharacterMovement()->MaxWalkSpeed = 200.f;
+	GetCharacterMovement()->MaxWalkSpeed = WalkMaxSpeed;
 	GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
 	GetCharacterMovement()->BrakingDecelerationFalling = 1500.0f;
@@ -47,9 +47,10 @@ AFRMonsterBase::AFRMonsterBase()
 	{
 		HpBar->SetWidgetClass(HpWidgetRef.Class); 
 		HpBar->SetWidgetSpace(EWidgetSpace::Screen);
-		HpBar->SetDrawSize(FVector2D(200.0f, 20.f));
+		HpBar->SetDrawSize(FVector2D(160.0f, 20.f));
 		HpBar->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
+
 	Level = 1;
 }
 void AFRMonsterBase::BeginPlay()
