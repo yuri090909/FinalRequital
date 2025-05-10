@@ -21,7 +21,7 @@ public:
 
 public:
 
-	FORCEINLINE virtual UAnimMontage* GetComboActionMontage() const { return ComboActionMontage; }
+	//FORCEINLINE virtual UAnimMontage* GetComboActionMontage() const { return ComboActionMontage; }
 	FORCEINLINE class UFRMeleeComboData* GetComboActionData() const { return ComboActionData; }
 
 	FORCEINLINE USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
@@ -39,6 +39,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UCameraComponent> FollowCamera;
 
+	// Input Section
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UInputMappingContext> DefaultMappingContext;
 
@@ -57,15 +58,14 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UInputAction> UltimateAttackAction;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
-	TObjectPtr<class UAnimMontage> ComboActionMontage;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	TArray<TObjectPtr<UInputAction>> QuickSlotActions;
 
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	//TObjectPtr<class UAnimMontage> ComboActionMontage;
+
+	//Data Section
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UFRMeleeComboData> ComboActionData;
-
-	//temp
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<class USkeletalMeshComponent> Sword;
-
 
 };

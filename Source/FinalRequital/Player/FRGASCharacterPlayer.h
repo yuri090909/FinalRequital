@@ -22,12 +22,21 @@ public:
 	virtual class UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
+	virtual void BeginPlay() override;
 
 protected:
 
 	void SetupGASInputComponent();
 	void GASInputPressed(int32 InputId);
 	void GASInputReleased(int32 InputId);
+
+public:
+
+	// Weapon QuickSlot
+	void QuickSlot1();
+	void QuickSlot2();
+	void QuickSlot3();
+	void QuickSlot4();
 
 protected:
 	UPROPERTY(EditAnywhere, Category = GAS)
@@ -39,6 +48,11 @@ protected:
 	UPROPERTY(EditAnywhere, Category = GAS)
 	TMap<int32, TSubclassOf<class UGameplayAbility>> StartInputAbilities;
 
+	UPROPERTY(EditAnywhere, Category = Component)
+	TObjectPtr<class UFRWeaponComponent> WeaponComponent;
+
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<class UFRWidgetComponent> HpBar;
+
+
 };

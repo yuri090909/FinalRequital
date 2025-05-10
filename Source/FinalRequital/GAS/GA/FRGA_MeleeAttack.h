@@ -35,8 +35,12 @@ protected:
 	void StartComboTimer();
 	void CheckComboInput();
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<class UFRMeleeComboData> CurrentComboData;
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<class UAnimMontage> ComboActionMontage;
 
 	uint8 CurrentCombo = 0;
 	FTimerHandle ComboTimerHandle;

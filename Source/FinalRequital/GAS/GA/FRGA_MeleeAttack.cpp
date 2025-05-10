@@ -39,7 +39,7 @@ void UFRGA_MeleeAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	FRCharacterBase->GetCharacterMovement()->SetMovementMode(MOVE_None);
 
 	UAbilityTask_PlayMontageAndWait* PlayAttackTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy
-	(this, TEXT("PlayMeleeAttack"), FRCharacterBase->GetComboActionMontage(),1.0f,GetNextSection());
+	(this, TEXT("PlayMeleeAttack"), ComboActionMontage,1.0f,GetNextSection());
 	PlayAttackTask->OnCompleted.AddDynamic(this, &UFRGA_MeleeAttack::OnCompleteCallback);
 	PlayAttackTask->OnInterrupted.AddDynamic(this, &UFRGA_MeleeAttack::OnInterruptedCallback);
 	PlayAttackTask->ReadyForActivation();

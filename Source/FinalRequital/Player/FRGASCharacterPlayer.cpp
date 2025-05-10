@@ -6,6 +6,7 @@
 #include "Player/FRPlayerState.h"
 #include "EnhancedInputComponent.h"
 #include "FRDebugHelper.h"
+#include "FRWeaponComponent.h"
 #include "UI/FRWidgetComponent.h"
 #include "UI/FRUserWidget.h"
 
@@ -15,6 +16,7 @@ AFRGASCharacterPlayer::AFRGASCharacterPlayer()
 	ASC = nullptr;
 
 	HpBar = CreateDefaultSubobject<UFRWidgetComponent>(TEXT("Widget"));
+	WeaponComponent = CreateDefaultSubobject<UFRWeaponComponent>(TEXT("WeaponComponent"));
 }
 
 void AFRGASCharacterPlayer::PossessedBy(AController* NewController)
@@ -55,6 +57,17 @@ void AFRGASCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInp
 	SetupGASInputComponent();
 }
 
+void AFRGASCharacterPlayer::BeginPlay()
+{
+	Super::BeginPlay();
+
+
+	if (WeaponComponent)
+	{
+		//WeaponComponent->InitializeWeapons();
+	}
+}
+
 void AFRGASCharacterPlayer::SetupGASInputComponent()
 {
 	if(IsValid(ASC) && IsValid(InputComponent))
@@ -64,7 +77,33 @@ void AFRGASCharacterPlayer::SetupGASInputComponent()
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &AFRGASCharacterPlayer::GASInputPressed, 0);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &AFRGASCharacterPlayer::GASInputReleased, 0);
 		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AFRGASCharacterPlayer::GASInputPressed, 1);
+		EnhancedInputComponent->BindAction(QuickSlotActions[0], ETriggerEvent::Triggered, this, &AFRGASCharacterPlayer::QuickSlot1);
+		EnhancedInputComponent->BindAction(QuickSlotActions[1], ETriggerEvent::Triggered, this, &AFRGASCharacterPlayer::QuickSlot2);
+		EnhancedInputComponent->BindAction(QuickSlotActions[2], ETriggerEvent::Triggered, this, &AFRGASCharacterPlayer::QuickSlot3);
+		EnhancedInputComponent->BindAction(QuickSlotActions[3], ETriggerEvent::Triggered, this, &AFRGASCharacterPlayer::QuickSlot4);
 	}
+}
+
+void AFRGASCharacterPlayer::QuickSlot1()
+{
+	if (WeaponComponent)
+		WeaponComponent->EquipWeapon(0); // 1¹ø ½½·Ô
+}
+
+void AFRGASCharacterPlayer::QuickSlot2()
+{
+	if (WeaponComponent)
+		WeaponComponent->EquipWeapon(1); // 2¹ø ½½·Ô
+}
+void AFRGASCharacterPlayer::QuickSlot3()
+{
+	if (WeaponComponent)
+		WeaponComponent->EquipWeapon(2); // 1¹ø ½½·Ô
+}
+void AFRGASCharacterPlayer::QuickSlot4()
+{
+	if (WeaponComponent)
+		WeaponComponent->EquipWeapon(3); // 2¹ø ½½·Ô
 }
 
 void AFRGASCharacterPlayer::GASInputPressed(int32 InputId)
