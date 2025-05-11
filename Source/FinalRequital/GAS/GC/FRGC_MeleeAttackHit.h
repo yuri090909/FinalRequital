@@ -24,4 +24,8 @@ protected:
 	// 할당할 파티클 이펙트
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = GameplayCue)
 	TObjectPtr<UParticleSystem> ParticleEffect;
+
+	// 타격 사운드
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = GameplayCue)
+	TObjectPtr<USoundBase> HitSound;
 };

@@ -4,6 +4,7 @@
 #include "GAS/GC/FRGC_MeleeAttackHit.h"
 #include "Particles/ParticleSystem.h"
 #include "kismet/GameplayStatics.h"
+#include "Sound/SoundBase.h"
 
 UFRGC_MeleeAttackHit::UFRGC_MeleeAttackHit()
 {
@@ -15,6 +16,11 @@ bool UFRGC_MeleeAttackHit::OnExecute_Implementation(AActor* Target, const FGamep
 	if (HitResult)
 	{
 		UGameplayStatics::SpawnEmitterAtLocation(Target, ParticleEffect, HitResult->ImpactPoint, FRotator::ZeroRotator, true);
+	}
+
+	if (HitSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(Target, HitSound, HitResult->ImpactPoint);
 	}
 
 	return Super::OnExecute_Implementation(Target, Parameters);
