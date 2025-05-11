@@ -29,5 +29,8 @@ protected:
 	UPROPERTY(EditAnywhere, Category = GAS)
 	TSubclassOf<class UGameplayEffect> AttackDamageEffect;
 
+	UPROPERTY(EditAnywhere, Category = Camera)
+	TSubclassOf<UCameraShakeBase> CameraShakeClass;
+
 	float CurrentLevel;
 };

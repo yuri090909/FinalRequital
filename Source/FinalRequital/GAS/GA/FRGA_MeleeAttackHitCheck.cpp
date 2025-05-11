@@ -6,6 +6,7 @@
 #include "GAS/TA/FRTA_Trace.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "FRDebugHelper.h"
+#include "FRGameplayTag.h"
 #include "GAS/Attribute/FRCharacterAttributeSet.h"
 
 UFRGA_MeleeAttackHitCheck::UFRGA_MeleeAttackHitCheck()
@@ -34,12 +35,25 @@ void UFRGA_MeleeAttackHitCheck::OnTraceResultCallback(const FGameplayAbilityTarg
 	{
 		// 타겟데이터 0번째 배열에 결과값이 존재하는지
 		FHitResult HitResult = UAbilitySystemBlueprintLibrary::GetHitResultFromTargetData(TargetDataHandle, 0);
-		D(FString::Printf(TEXT("Target: %s Detected"), *(HitResult.GetActor()->GetName())));
+		//D(FString::Printf(TEXT("Target: %s Detected"), *(HitResult.GetActor()->GetName())));
+
+		if (CameraShakeClass)
+		{   // 피격시 카메라 쉐이크적용
+			AActor* AvatarActor = GetAvatarActorFromActorInfo();
+			APawn* SourcePawn = Cast<APawn>(AvatarActor);
+			if (SourcePawn)
+			{
+				APlayerController* SourcePC = Cast<APlayerController>(SourcePawn->GetController());
+				if (SourcePC)
+				{
+					SourcePC->ClientStartCameraShake(CameraShakeClass);
+				}
+			}
+		}
 
 		UAbilitySystemComponent* SourceASC = GetAbilitySystemComponentFromActorInfo_Checked();
 		const UFRCharacterAttributeSet* SourceAttribute = SourceASC->GetSet<UFRCharacterAttributeSet>();
 
-		/*
 		UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(HitResult.GetActor());
 		if(!SourceASC||!TargetASC)
 		{
@@ -47,6 +61,8 @@ void UFRGA_MeleeAttackHitCheck::OnTraceResultCallback(const FGameplayAbilityTarg
 			FR_LOG(FRLOG, Error, TEXT("ASC Not Found!"));
 			return;
 		}
+
+		/*
 		//소스는 데미지를 불러오고 타겟은 값을 변경해줘야함.
 		const UFRCharacterAttributeSet* SourceAttribute = SourceASC->GetSet<UFRCharacterAttributeSet>();
 		// const UFRCharacterAttributeSet* TargetAttribute = SourceASC->GetSet<UFRCharacterAttributeSet>();
@@ -65,6 +81,13 @@ void UFRGA_MeleeAttackHitCheck::OnTraceResultCallback(const FGameplayAbilityTarg
 		if(EffectSpecHandle.IsValid())
 		{
 			ApplyGameplayEffectSpecToTarget(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, EffectSpecHandle, TargetDataHandle);
+
+			FGameplayEffectContextHandle CueContextHandle = UAbilitySystemBlueprintLibrary::GetEffectContext(EffectSpecHandle);
+			CueContextHandle.AddHitResult(HitResult);
+			FGameplayCueParameters CueParameters;
+			CueParameters.EffectContext = CueContextHandle;
+
+			TargetASC->ExecuteGameplayCue(GAMEPLAYCUE_CHARACTER_MELEEATTACKHIT, CueParameters);
 		}
 
 	}
