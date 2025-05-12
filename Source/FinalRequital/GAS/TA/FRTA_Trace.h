@@ -24,6 +24,7 @@ public:
 	//타게팅 확정하고 남은 프로세스 진행 함수
 	virtual void ConfirmTargetingAndContinue() override;
 	void SetShowDebug(bool InShowDebug) { bShowDebug = InShowDebug; }
+
 protected:
 	// 데이터들을 가지고 있는 핸들
 	virtual FGameplayAbilityTargetDataHandle MakeTargetData() const;

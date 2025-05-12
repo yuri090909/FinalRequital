@@ -23,7 +23,7 @@ void UFRGA_MeleeAttackHitCheck::ActivateAbility(const FGameplayAbilitySpecHandle
 	//콤보 현재 레벨을 에님노티파이에서 페이로드 데이터로부터 가저온 것으로 적용
 	CurrentLevel = TriggerEventData->EventMagnitude;
 
-	UFRAT_Trace* AttackTraceTask = UFRAT_Trace::CreateTask(this, AFRTA_Trace::StaticClass());
+	UFRAT_Trace* AttackTraceTask = UFRAT_Trace::CreateTask(this, TargetActorClass);
 	AttackTraceTask->OnComplete.AddDynamic(this, &UFRGA_MeleeAttackHitCheck::OnTraceResultCallback);
 	AttackTraceTask->ReadyForActivation();
 
@@ -31,6 +31,7 @@ void UFRGA_MeleeAttackHitCheck::ActivateAbility(const FGameplayAbilitySpecHandle
 
 void UFRGA_MeleeAttackHitCheck::OnTraceResultCallback(const FGameplayAbilityTargetDataHandle& TargetDataHandle)
 {
+	// 단일 대상 감지 Trace 기반, SweepSingle 등의 HitResult 사용
 	if(UAbilitySystemBlueprintLibrary::TargetDataHasHitResult(TargetDataHandle,0))
 	{
 		// 타겟데이터 0번째 배열에 결과값이 존재하는지
@@ -89,7 +90,25 @@ void UFRGA_MeleeAttackHitCheck::OnTraceResultCallback(const FGameplayAbilityTarg
 
 			TargetASC->ExecuteGameplayCue(GAMEPLAYCUE_CHARACTER_MELEEATTACKHIT, CueParameters);
 		}
+	}
 
+	// 다수 대상 감지 - OverlapMulti 의 Actor 배열 사용
+	else if (UAbilitySystemBlueprintLibrary::TargetDataHasActor(TargetDataHandle, 0))
+	{
+		UAbilitySystemComponent* SourceASC = GetAbilitySystemComponentFromActorInfo_Checked();
+
+		FGameplayEffectSpecHandle EffectSpecHandle = MakeOutgoingGameplayEffectSpec(AttackDamageEffect, CurrentLevel);
+		if (EffectSpecHandle.IsValid())
+		{
+			ApplyGameplayEffectSpecToTarget(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, EffectSpecHandle, TargetDataHandle);
+
+			FGameplayEffectContextHandle CueContextHandle = UAbilitySystemBlueprintLibrary::GetEffectContext(EffectSpecHandle);
+			CueContextHandle.AddActors(TargetDataHandle.Data[0].Get()->GetActors(), false);
+			FGameplayCueParameters CueParameters;
+			CueParameters.EffectContext = CueContextHandle;
+
+			SourceASC->ExecuteGameplayCue(GAMEPLAYCUE_CHARACTER_MELEEATTACKHIT, CueParameters);
+		}
 	}
 
 	bool bReplicatedEndAbility = true;

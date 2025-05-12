@@ -13,14 +13,42 @@ UFRGC_MeleeAttackHit::UFRGC_MeleeAttackHit()
 bool UFRGC_MeleeAttackHit::OnExecute_Implementation(AActor* Target, const FGameplayCueParameters& Parameters) const
 {
 	const FHitResult* HitResult = Parameters.EffectContext.GetHitResult();
+
 	if (HitResult)
 	{
-		UGameplayStatics::SpawnEmitterAtLocation(Target, ParticleEffect, HitResult->ImpactPoint, FRotator::ZeroRotator, true);
-	}
+		FVector SpawnLocation = HitResult->ImpactPoint;
 
-	if (HitSound)
+		if (ParticleEffect)
+		{
+			UGameplayStatics::SpawnEmitterAtLocation(Target, ParticleEffect, SpawnLocation, FRotator::ZeroRotator, true);
+		}
+
+		if (HitSound)
+		{
+			UGameplayStatics::PlaySoundAtLocation(Target, HitSound, SpawnLocation);
+		}
+	}
+	else
 	{
-		UGameplayStatics::PlaySoundAtLocation(Target, HitSound, HitResult->ImpactPoint);
+		TArray<TWeakObjectPtr<AActor>> TargetActors = Parameters.EffectContext.Get()->GetActors();
+
+		for (const auto& TargetActor : TargetActors)
+		{
+			if (TargetActor.IsValid())
+			{
+				FVector SpawnLocation = TargetActor->GetActorLocation();
+
+				if (ParticleEffect)
+				{
+					UGameplayStatics::SpawnEmitterAtLocation(TargetActor.Get(), ParticleEffect, SpawnLocation, FRotator::ZeroRotator, true);
+				}
+
+				if (HitSound)
+				{
+					UGameplayStatics::PlaySoundAtLocation(TargetActor.Get(), HitSound, SpawnLocation);
+				}
+			}
+		}
 	}
 
 	return Super::OnExecute_Implementation(Target, Parameters);

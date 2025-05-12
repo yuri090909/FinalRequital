@@ -33,4 +33,9 @@ protected:
 	TSubclassOf<UCameraShakeBase> CameraShakeClass;
 
 	float CurrentLevel;
+
+	// 공격시 애님몽타주를 실행할 때 모두 이 클래스를 상속받음
+	// 블루프린트에서 할당한 타겟액터클래스 : 다수감지(멀티트레이스), 싱글감지(트레이스) 설정 
+	UPROPERTY(EditAnywhere, Category = GAS)
+	TSubclassOf<class AFRTA_Trace> TargetActorClass;
 };
