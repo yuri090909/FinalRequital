@@ -28,7 +28,6 @@ void UFRWeaponComponent::BeginPlay()
 	{
 		ASC = OwnerCharacter->GetAbilitySystemComponent();
 
-		// Attach MeshComponent to Character's Mesh
 		if (WeaponMeshComponent && OwnerCharacter->GetMesh())
 		{
 			WeaponMeshComponent->RegisterComponent();
@@ -37,47 +36,34 @@ void UFRWeaponComponent::BeginPlay()
 	}
 }
 
-void UFRWeaponComponent::EquipWeapon(int32 SlotIndex)
+void UFRWeaponComponent::EquipWeapon(EWeaponType WeaponType)
 {
-	if (!WeaponSlots.IsValidIndex(SlotIndex) || !ASC || !OwnerCharacter)
-		return;
-
-	// 이미 장착 중인 무기면 해제 (맨손 전환)
-	if (CurrentWeaponIndex == SlotIndex)
+	if (!ASC || !OwnerCharacter || WeaponType == CurrentWeaponType)
 	{
+		// 현재 장착된 무기와 같으면 해제
 		ClearWeapon();
 		return;
 	}
 
-	// 해제
-	ClearWeapon();
+	const FWeaponData* WeaponData = WeaponSlots.FindByPredicate([WeaponType](const FWeaponData& Data)
+		{
+			return Data.WeaponType == WeaponType;
+		});
 
-	const FWeaponData& WeaponData = WeaponSlots[SlotIndex];
-
-	// 메시 장착
-	AttachWeaponMesh(WeaponData.WeaponMesh, WeaponData.AttachSocketName);
-
-	// 어빌리티 장착
-	if (WeaponData.AttackAbility)
-	{
-		GiveAbility(WeaponData.AttackAbility, 1, AttackAbilityHandle); // 왼클릭
-	}
-	if (WeaponData.SubAttackAbility)
-	{
-		GiveAbility(WeaponData.SubAttackAbility, 2, SubAttackAbilityHandle); // 오른클릭
-	}
-
-	CurrentWeaponIndex = SlotIndex;
-}
-
-void UFRWeaponComponent::AttachWeaponMesh(USkeletalMesh* Mesh, FName SocketName)
-{
-	if (!WeaponMeshComponent || !Mesh || !OwnerCharacter)
+	if (!WeaponData)
 		return;
 
-	WeaponMeshComponent->SetSkeletalMesh(Mesh);
-	WeaponMeshComponent->AttachToComponent(OwnerCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, SocketName);
-	WeaponMeshComponent->SetVisibility(true);
+	ClearWeapon();
+
+	AttachWeaponMesh(WeaponData->WeaponMesh, WeaponData->AttachSocketName);
+
+	if (WeaponData->AttackAbility)
+		GiveAbility(WeaponData->AttackAbility, 1, AttackAbilityHandle);
+
+	if (WeaponData->SpecialAttackAbility)
+		GiveAbility(WeaponData->SpecialAttackAbility, 2, SubAttackAbilityHandle);
+
+	CurrentWeaponType = WeaponType;
 }
 
 void UFRWeaponComponent::ClearWeapon()
@@ -88,7 +74,17 @@ void UFRWeaponComponent::ClearWeapon()
 	ClearAbility(AttackAbilityHandle);
 	ClearAbility(SubAttackAbilityHandle);
 
-	CurrentWeaponIndex = -1;
+	CurrentWeaponType = EWeaponType::None;
+}
+
+void UFRWeaponComponent::AttachWeaponMesh(USkeletalMesh* Mesh, FName SocketName)
+{
+	if (!WeaponMeshComponent || !Mesh || !OwnerCharacter)
+		return;
+
+	WeaponMeshComponent->SetSkeletalMesh(Mesh);
+	WeaponMeshComponent->AttachToComponent(OwnerCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, SocketName);
+	WeaponMeshComponent->SetVisibility(true);
 }
 
 void UFRWeaponComponent::GiveAbility(TSubclassOf<UGameplayAbility> AbilityClass, int32 InputID, FGameplayAbilitySpecHandle& OutHandle)
@@ -107,4 +103,9 @@ void UFRWeaponComponent::ClearAbility(FGameplayAbilitySpecHandle& Handle)
 		ASC->ClearAbility(Handle);
 		Handle = FGameplayAbilitySpecHandle();
 	}
+}
+
+bool UFRWeaponComponent::IsUnarmed() const
+{
+	return CurrentWeaponType == EWeaponType::None;
 }

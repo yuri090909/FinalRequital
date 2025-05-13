@@ -88,23 +88,23 @@ void AFRGASCharacterPlayer::SetupGASInputComponent()
 void AFRGASCharacterPlayer::QuickSlot1()
 {
 	if (WeaponComponent)
-		WeaponComponent->EquipWeapon(0); // 1¹ø ½½·Ô
+		WeaponComponent->EquipWeapon(EWeaponType::Sword); // 1¹ø ½½·Ô
 }
 
 void AFRGASCharacterPlayer::QuickSlot2()
 {
 	if (WeaponComponent)
-		WeaponComponent->EquipWeapon(1); // 2¹ø ½½·Ô
+		WeaponComponent->EquipWeapon(EWeaponType::Bow); // 2¹ø ½½·Ô
 }
 void AFRGASCharacterPlayer::QuickSlot3()
 {
 	if (WeaponComponent)
-		WeaponComponent->EquipWeapon(2); // 1¹ø ½½·Ô
+		WeaponComponent->EquipWeapon(EWeaponType::IronMace); // 1¹ø ½½·Ô
 }
 void AFRGASCharacterPlayer::QuickSlot4()
 {
 	if (WeaponComponent)
-		WeaponComponent->EquipWeapon(3); // 2¹ø ½½·Ô
+		WeaponComponent->EquipWeapon(EWeaponType::BronzeBell); // 2¹ø ½½·Ô
 }
 
 void AFRGASCharacterPlayer::GASInputPressed(int32 InputId)

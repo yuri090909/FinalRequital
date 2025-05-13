@@ -7,16 +7,29 @@
 #include "Components/ActorComponent.h"
 #include "FRWeaponComponent.generated.h"
 
+UENUM(BlueprintType)
+enum class EWeaponType : uint8
+{
+	None			UMETA(DisplayName = "Unarmed"),
+	Sword		    UMETA(DisplayName = "Sword"),
+	IronMace	    UMETA(DisplayName = "IronMace"),
+	Bow             UMETA(DisplayName = "Bow"),
+	BronzeBell      UMETA(DisplayName = "BronzeBell")
+};
+
 USTRUCT(BlueprintType)
 struct FWeaponData
 {
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	EWeaponType WeaponType = EWeaponType::None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<class UGameplayAbility> AttackAbility;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TSubclassOf<class UGameplayAbility> SubAttackAbility;
+	TSubclassOf<class UGameplayAbility> SpecialAttackAbility;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TObjectPtr<class USkeletalMesh> WeaponMesh;
@@ -33,14 +46,14 @@ class FINALREQUITAL_API UFRWeaponComponent : public UActorComponent
 public:
 	UFRWeaponComponent();
 
-	void EquipWeapon(int32 SlotIndex);
+	void EquipWeapon(EWeaponType WeaponType);
+	void ClearWeapon();
+	bool IsUnarmed() const;
 
 protected:
 	virtual void BeginPlay() override;
 
 	void AttachWeaponMesh(USkeletalMesh* Mesh, FName SocketName);
-	void ClearWeapon();
-
 	void GiveAbility(TSubclassOf<class UGameplayAbility> AbilityClass, int32 InputID, FGameplayAbilitySpecHandle& OutHandle);
 	void ClearAbility(FGameplayAbilitySpecHandle& Handle);
 
@@ -49,7 +62,7 @@ protected:
 	TArray<FWeaponData> WeaponSlots;
 
 	UPROPERTY()
-	int32 CurrentWeaponIndex = -1;
+	EWeaponType CurrentWeaponType = EWeaponType::None;
 
 	UPROPERTY()
 	FGameplayAbilitySpecHandle AttackAbilityHandle;
