@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameplayAbilitySpecHandle.h"
+#include "Abilities/GameplayAbility.h"
 #include "Components/ActorComponent.h"
 #include "FRWeaponComponent.generated.h"
 
@@ -22,20 +22,21 @@ struct FWeaponData
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	EWeaponType WeaponType = EWeaponType::None;
+	UPROPERTY(EditAnywhere)
+	EWeaponType WeaponType;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TSubclassOf<class UGameplayAbility> AttackAbility;
+	UPROPERTY(EditAnywhere)
+	USkeletalMesh* WeaponMesh;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TSubclassOf<class UGameplayAbility> SpecialAttackAbility;
+	//hand_rSocket
+	UPROPERTY(EditAnywhere)
+	FName AttachSocketName;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TObjectPtr<class USkeletalMesh> WeaponMesh;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UGameplayAbility> AttackAbility;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FName AttachSocketName = "hand_rSocket";
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UGameplayAbility> SpecialAttackAbility;
 };
 
 UCLASS(ClassGroup = (Custom), BlueprintType, Blueprintable, meta = (BlueprintSpawnableComponent))
@@ -48,7 +49,6 @@ public:
 
 	void EquipWeapon(EWeaponType WeaponType);
 	void ClearWeapon();
-	bool IsUnarmed() const;
 
 protected:
 	virtual void BeginPlay() override;
@@ -59,7 +59,7 @@ protected:
 
 protected:
 	UPROPERTY(EditAnywhere, Category = Weapon)
-	TArray<FWeaponData> WeaponSlots;
+	TMap<EWeaponType, FWeaponData> WeaponSlots;
 
 	UPROPERTY()
 	EWeaponType CurrentWeaponType = EWeaponType::None;

@@ -141,3 +141,19 @@ class UAbilitySystemComponent* AFRGASCharacterPlayer::GetAbilitySystemComponent(
 {
 	return ASC;
 }
+
+void AFRGASCharacterPlayer::AdjustBronzeBellLayerAnim_Implementation()
+{
+}
+
+void AFRGASCharacterPlayer::AdjustBowLayerAnim_Implementation()
+{
+}
+
+void AFRGASCharacterPlayer::AdjustUnarmedLayerAnim_Implementation()
+{
+}
+
+void AFRGASCharacterPlayer::AdjustMeleeLayerAnim_Implementation()
+{
+}

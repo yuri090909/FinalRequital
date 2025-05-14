@@ -54,5 +54,18 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<class UFRWidgetComponent> HpBar;
 
+public:
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void AdjustUnarmedLayerAnim();
 
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void AdjustMeleeLayerAnim();
+
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void AdjustBowLayerAnim();
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void AdjustBronzeBellLayerAnim();
 };

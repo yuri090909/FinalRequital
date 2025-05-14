@@ -40,16 +40,11 @@ void UFRWeaponComponent::EquipWeapon(EWeaponType WeaponType)
 {
 	if (!ASC || !OwnerCharacter || WeaponType == CurrentWeaponType)
 	{
-		// 현재 장착된 무기와 같으면 해제
 		ClearWeapon();
 		return;
 	}
 
-	const FWeaponData* WeaponData = WeaponSlots.FindByPredicate([WeaponType](const FWeaponData& Data)
-		{
-			return Data.WeaponType == WeaponType;
-		});
-
+	const FWeaponData* WeaponData = WeaponSlots.Find(WeaponType);
 	if (!WeaponData)
 		return;
 
@@ -64,7 +59,25 @@ void UFRWeaponComponent::EquipWeapon(EWeaponType WeaponType)
 		GiveAbility(WeaponData->SpecialAttackAbility, 2, SubAttackAbilityHandle);
 
 	CurrentWeaponType = WeaponType;
+
+	// 무기 타입에 따라 애니메이션 레이어 조정
+	switch (WeaponType)
+	{
+	case EWeaponType::Sword:
+	case EWeaponType::IronMace:
+		OwnerCharacter->AdjustMeleeLayerAnim();
+		break;
+	case EWeaponType::Bow:
+		OwnerCharacter->AdjustBowLayerAnim();
+		break;
+	case EWeaponType::BronzeBell:
+		OwnerCharacter->AdjustBronzeBellLayerAnim();
+		break;
+	default:
+		break;
+	}
 }
+
 
 void UFRWeaponComponent::ClearWeapon()
 {
@@ -75,6 +88,11 @@ void UFRWeaponComponent::ClearWeapon()
 	ClearAbility(SubAttackAbilityHandle);
 
 	CurrentWeaponType = EWeaponType::None;
+
+	if (OwnerCharacter)
+	{
+		OwnerCharacter->AdjustUnarmedLayerAnim();
+	}
 }
 
 void UFRWeaponComponent::AttachWeaponMesh(USkeletalMesh* Mesh, FName SocketName)
@@ -103,9 +121,4 @@ void UFRWeaponComponent::ClearAbility(FGameplayAbilitySpecHandle& Handle)
 		ASC->ClearAbility(Handle);
 		Handle = FGameplayAbilitySpecHandle();
 	}
-}
-
-bool UFRWeaponComponent::IsUnarmed() const
-{
-	return CurrentWeaponType == EWeaponType::None;
 }
