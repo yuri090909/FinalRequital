@@ -78,4 +78,8 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<class UAbilitySystemComponent> ASC;
+
+	UPROPERTY()
+	TObjectPtr<class UFRHUDWidget> HUD;
+
 };

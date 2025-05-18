@@ -29,6 +29,12 @@ void UFRGA_MeleeAttack::InputPressed(const FGameplayAbilitySpecHandle Handle,
 	}
 }
 
+void UFRGA_MeleeAttack::InputReleased(const FGameplayAbilitySpecHandle Handle,
+	const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo)
+{
+	Super::InputReleased(Handle, ActorInfo, ActivationInfo);
+}
+
 void UFRGA_MeleeAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
                                         const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
                                         const FGameplayEventData* TriggerEventData)

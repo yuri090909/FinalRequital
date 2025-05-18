@@ -6,6 +6,8 @@
 #include "AbilitySystemComponent.h"
 #include "GameFramework/Character.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "Player/FRPlayerController.h"
+#include "UI/FRHUDWidget.h"
 #include "AbilitySystemBlueprintLibrary.h"
 
 UFRWeaponComponent::UFRWeaponComponent()
@@ -28,10 +30,18 @@ void UFRWeaponComponent::BeginPlay()
 	{
 		ASC = OwnerCharacter->GetAbilitySystemComponent();
 
+		if (AFRPlayerController* PC = Cast<AFRPlayerController>(OwnerCharacter->GetController()))
+		{
+			HUD = PC->GetHUDWidget();
+		}
+
 		if (WeaponMeshComponent && OwnerCharacter->GetMesh())
 		{
 			WeaponMeshComponent->RegisterComponent();
-			WeaponMeshComponent->AttachToComponent(OwnerCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT("hand_rSocket"));
+			WeaponMeshComponent->AttachToComponent(
+				OwnerCharacter->GetMesh(),
+				FAttachmentTransformRules::SnapToTargetIncludingScale,
+				TEXT("hand_rSocket"));
 		}
 	}
 }
@@ -76,6 +86,13 @@ void UFRWeaponComponent::EquipWeapon(EWeaponType WeaponType)
 	default:
 		break;
 	}
+
+	// 활 장착 시 크로스헤어 표시
+	if (HUD)
+	{
+		const bool bShowCrosshair = (WeaponType == EWeaponType::Bow);
+		HUD->ShowCrosshair(bShowCrosshair);
+	}
 }
 
 
@@ -92,6 +109,11 @@ void UFRWeaponComponent::ClearWeapon()
 	if (OwnerCharacter)
 	{
 		OwnerCharacter->AdjustUnarmedLayerAnim();
+	}
+
+	if (HUD)
+	{
+		HUD->ShowCrosshair(false);
 	}
 }
 

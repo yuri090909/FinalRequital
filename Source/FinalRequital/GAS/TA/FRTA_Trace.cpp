@@ -58,9 +58,16 @@ FGameplayAbilityTargetDataHandle AFRTA_Trace::MakeTargetData() const
 	const float AttackRadius = AttributeSet->GetAttackRadius();
 
 	FCollisionQueryParams Params(SCENE_QUERY_STAT(UFRTA_Trace), false, Character);
-	const FVector Forward = Character->GetActorForwardVector();
+	/*const FVector Forward = Character->GetActorForwardVector();
 	const FVector Start = Character->GetActorLocation() + Forward * Character->GetCapsuleComponent()->GetScaledCapsuleRadius();
-	const FVector End = Start + Forward * AttackRange;
+	const FVector End = Start + Forward * AttackRange;*/
+
+	const FVector Forward = Character->GetActorForwardVector();
+	const FVector Right = Character->GetActorRightVector();
+	const FVector DiagonalDirection = (Forward + Right).GetSafeNormal();
+
+	const FVector Start = Character->GetActorLocation() + DiagonalDirection * Character->GetCapsuleComponent()->GetScaledCapsuleRadius();
+	const FVector End = Start + DiagonalDirection * AttackRange;
 
 	bool HitDetected = GetWorld()->SweepSingleByChannel
 	(OutHitResult, Start, End, FQuat::Identity, CCHANNEL_FRACTION, FCollisionShape::MakeSphere(AttackRadius), Params);
@@ -78,7 +85,14 @@ FGameplayAbilityTargetDataHandle AFRTA_Trace::MakeTargetData() const
 		FVector CapsuleOrigin = Start + (End - Start) * 0.5f;
 		float CapsuleHalfHeight = AttackRange * 0.5f;
 		FColor DrawColor = HitDetected ? FColor::Green : FColor::Red;
-		DrawDebugCapsule(GetWorld(), CapsuleOrigin, CapsuleHalfHeight, AttackRadius, FRotationMatrix::MakeFromZ(Forward).ToQuat(), DrawColor, false, 4.0f);
+		DrawDebugCapsule(GetWorld(), 
+			CapsuleOrigin,
+			CapsuleHalfHeight,
+			AttackRadius,
+			FRotationMatrix::MakeFromZ(Forward).ToQuat(), 
+			DrawColor,
+			false,
+			4.0f);
 	}
 #endif
 	return DataHandle;

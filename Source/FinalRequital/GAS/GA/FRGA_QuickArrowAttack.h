@@ -4,22 +4,20 @@
 
 #include "CoreMinimal.h"
 #include "Abilities/GameplayAbility.h"
-#include "FRGA_MeleeAttack.generated.h"
+#include "FRGA_QuickArrowAttack.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class FINALREQUITAL_API UFRGA_MeleeAttack : public UGameplayAbility
+class FINALREQUITAL_API UFRGA_QuickArrowAttack : public UGameplayAbility
 {
 	GENERATED_BODY()
-
 public:
-	UFRGA_MeleeAttack();
+	UFRGA_QuickArrowAttack();
 
 public:
 	virtual void InputPressed(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) override;
-	virtual void InputReleased(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) override;
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 	virtual void CancelAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateCancelAbility) override;
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
@@ -31,18 +29,14 @@ protected:
 	UFUNCTION()
 	void OnInterruptedCallback();
 
-	FName GetNextSection();
-	void StartComboTimer();
-	void CheckComboInput();
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Arrow")
+	TSubclassOf<class AFRArrowProjectile> ArrowClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TObjectPtr<class UFRMeleeComboData> CurrentComboData;
+	TObjectPtr<class UAnimMontage> ArrowAttackMontage;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Arrow")
+	float FirePower = 0.3f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TObjectPtr<class UAnimMontage> ComboActionMontage;
-
-	uint8 CurrentCombo = 0;
-	FTimerHandle ComboTimerHandle;
-	bool HasNextComboInput = false;
+	void SpawnAndFireArrow();
 };

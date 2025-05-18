@@ -36,18 +36,25 @@ FGameplayAbilityTargetDataHandle AFRTA_MultiTrace::MakeTargetData() const
 	const float AttackRadius = AttributeSet->GetAttackRadius() * 3.0f;
 
 	FCollisionQueryParams Params(SCENE_QUERY_STAT(UFRTA_MultiTrace), false, Character);
+	//const FVector Forward = Character->GetActorForwardVector();
+
 	const FVector Forward = Character->GetActorForwardVector();
-	const FVector Start = Character->GetActorLocation() + Forward * Character->GetCapsuleComponent()->GetScaledCapsuleRadius();
-	const FVector End = Start + Forward * AttackRange;
+	const FVector Right = Character->GetActorRightVector();
+	const FVector DiagonalDirection = (Forward + Right).GetSafeNormal();
+	const FVector Start = Character->GetActorLocation() + DiagonalDirection * Character->GetCapsuleComponent()->GetScaledCapsuleRadius();
+	const FVector End = Start + DiagonalDirection * AttackRange;
+
+	//const FVector Start = Character->GetActorLocation() + Forward * Character->GetCapsuleComponent()->GetScaledCapsuleRadius();
+	//const FVector End = Start + Forward * AttackRange;
 
 	TArray<FHitResult> HitResults;
 	bool bHit = GetWorld()->SweepMultiByChannel(
 		HitResults,
 		Start,
 		End,
-		FRotationMatrix::MakeFromZ(Forward).ToQuat(),
+		FRotationMatrix::MakeFromZ(DiagonalDirection).ToQuat(),
 		CCHANNEL_FRACTION,
-		FCollisionShape::MakeCapsule(AttackRadius, AttackRange * 0.5f), // 캡슐형 감지로 대체 (더 넓고 납작하게)
+		FCollisionShape::MakeCapsule(AttackRadius, AttackRange * 0.5f), 
 		Params
 	);
 
@@ -82,7 +89,7 @@ FGameplayAbilityTargetDataHandle AFRTA_MultiTrace::MakeTargetData() const
 			CapsuleOrigin,
 			CapsuleHalfHeight,
 			AttackRadius,
-			FRotationMatrix::MakeFromZ(Forward).ToQuat(),
+			FRotationMatrix::MakeFromZ(DiagonalDirection).ToQuat(), 
 			DrawColor,
 			false,
 			4.0f
