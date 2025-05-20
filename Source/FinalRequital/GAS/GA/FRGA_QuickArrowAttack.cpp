@@ -6,6 +6,8 @@
 #include "FRDebugHelper.h"
 #include "Character/FRCharacterBase.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
+#include "Actor/FRArrowProjectile.h"
+#include "Camera/CameraComponent.h"
 
 UFRGA_QuickArrowAttack::UFRGA_QuickArrowAttack()
 {
@@ -36,12 +38,8 @@ void UFRGA_QuickArrowAttack::ActivateAbility(const FGameplayAbilitySpecHandle Ha
 
 }
 
-
 void UFRGA_QuickArrowAttack::OnCompleteCallback()
 {
-	// 실제 화살 발사
-	//SpawnAndFireArrow();
-
 	bool bReplicatedEndAbility = true;
 	bool bWasCancelled = false;
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, bReplicatedEndAbility, bWasCancelled);
@@ -73,24 +71,3 @@ void UFRGA_QuickArrowAttack::EndAbility(const FGameplayAbilitySpecHandle Handle,
 	AFRCharacterBase* FRCharacterBase = CastChecked<AFRCharacterBase>(ActorInfo->AvatarActor.Get());
 	FRCharacterBase->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
 }
-
-/*
-	AActor* AvatarActor = GetAvatarActorFromActorInfo();
-	if (!AvatarActor || !ArrowClass) return;
-
-	USkeletalMeshComponent* Mesh = AvatarActor->FindComponentByClass<USkeletalMeshComponent>();
-	if (!Mesh) return;
-
-	const FVector MuzzleLocation = Mesh->GetSocketLocation(MuzzleSocketName);
-	const FRotator MuzzleRotation = Mesh->GetSocketRotation(MuzzleSocketName);
-
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.Owner = AvatarActor;
-	SpawnParams.Instigator = AvatarActor->GetInstigator();
-
-	AFRArrowProjectile* Arrow = GetWorld()->SpawnActor<AFRArrowProjectile>(ArrowClass, MuzzleLocation, MuzzleRotation, SpawnParams);
-	if (Arrow)
-	{
-		Arrow->InitVelocity(MuzzleRotation.Vector(), FirePower);
-	}
-}*/

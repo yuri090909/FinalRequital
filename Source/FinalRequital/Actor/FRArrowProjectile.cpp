@@ -2,26 +2,34 @@
 
 
 #include "Actor/FRArrowProjectile.h"
+#include "GameFramework/ProjectileMovementComponent.h"
+#include "Components/StaticMeshComponent.h"
 
-// Sets default values
 AFRArrowProjectile::AFRArrowProjectile()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ArrowMesh"));
+	RootComponent = Mesh;
+
+	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
+	ProjectileMovement->InitialSpeed = 3000.f;
+	ProjectileMovement->MaxSpeed = 3000.f;
+	ProjectileMovement->bRotationFollowsVelocity = true;
+	ProjectileMovement->ProjectileGravityScale = 0.5f;
+	ProjectileMovement->bInitialVelocityInLocalSpace = false;
 
 }
 
-// Called when the game starts or when spawned
 void AFRArrowProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
-// Called every frame
-void AFRArrowProjectile::Tick(float DeltaTime)
+void AFRArrowProjectile::InitVelocity(const FVector& Direction, float Speed)
 {
-	Super::Tick(DeltaTime);
-
+	if (ProjectileMovement)
+	{
+		ProjectileMovement->Velocity = Direction * Speed;
+	}
 }
-

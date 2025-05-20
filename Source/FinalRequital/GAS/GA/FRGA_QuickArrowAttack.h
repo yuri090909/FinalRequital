@@ -29,14 +29,7 @@ protected:
 	UFUNCTION()
 	void OnInterruptedCallback();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Arrow")
-	TSubclassOf<class AFRArrowProjectile> ArrowClass;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<class UAnimMontage> ArrowAttackMontage;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Arrow")
-	float FirePower = 0.3f;
-
-	void SpawnAndFireArrow();
 };
