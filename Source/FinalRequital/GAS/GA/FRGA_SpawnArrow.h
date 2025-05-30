@@ -6,6 +6,7 @@
 #include "Abilities/GameplayAbility.h"
 #include "FRGA_SpawnArrow.generated.h"
 
+
 /**
  * 
  */
@@ -22,6 +23,7 @@ public:
 		const FGameplayAbilityActorInfo* ActorInfo,
 		const FGameplayAbilityActivationInfo ActivationInfo,
 		const FGameplayEventData* TriggerEventData) override;
+
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Arrow")

@@ -6,6 +6,7 @@
 #include "Camera/CameraComponent.h"
 #include "Character/FRCharacterBase.h"
 #include "FRDebugHelper.h"
+#include "Components/SphereComponent.h"
 
 UFRGA_SpawnArrow::UFRGA_SpawnArrow()
 {
@@ -47,7 +48,7 @@ void UFRGA_SpawnArrow::SpawnAndFireArrow()
 	GetWorld()->LineTraceSingleByChannel(HitResult, CameraLocation, TraceEnd, ECC_Visibility, Params);
 
 	FVector TargetPoint = HitResult.bBlockingHit ? HitResult.ImpactPoint : TraceEnd;
-	FVector MuzzleLocation = Mesh->GetSocketLocation("Arrow_socket");
+	FVector MuzzleLocation = Mesh->GetSocketLocation("Bow_socket");
 	FVector FireDirection = (TargetPoint - MuzzleLocation).GetSafeNormal();
 	FRotator FireRotation = FireDirection.Rotation();
 
@@ -61,5 +62,6 @@ void UFRGA_SpawnArrow::SpawnAndFireArrow()
 	if (Arrow)
 	{
 		Arrow->InitVelocity(FireDirection, FirePower);
+		Arrow->GetCollisionComponent()->IgnoreActorWhenMoving(AvatarActor, true);
 	}
 }
