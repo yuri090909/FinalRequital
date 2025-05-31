@@ -20,13 +20,13 @@ void UFRGA_SpawnArrow::ActivateAbility(
 	const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
-	SpawnAndFireArrow();
+	SpawnAndFireArrow(BasicFirePower, BasicProjectileGravityPower);
 
 	// Ability 즉시 종료
 	EndAbility(Handle, ActorInfo, ActivationInfo, true, false);
 }
 
-void UFRGA_SpawnArrow::SpawnAndFireArrow()
+void UFRGA_SpawnArrow::SpawnAndFireArrow(float InFirePower, float InProjectileGravityPower)
 {
 	AActor* AvatarActor = GetAvatarActorFromActorInfo();
 	if (!AvatarActor || !ArrowClass) return;
@@ -40,7 +40,7 @@ void UFRGA_SpawnArrow::SpawnAndFireArrow()
 
 	FVector CameraLocation = CameraComp->GetComponentLocation();
 	FVector CameraDirection = CameraComp->GetForwardVector();
-	FVector TraceEnd = CameraLocation + CameraDirection * 6000.0f;
+	FVector TraceEnd = CameraLocation + CameraDirection * 10000.0f;
 
 	FHitResult HitResult;
 	FCollisionQueryParams Params;
@@ -61,7 +61,9 @@ void UFRGA_SpawnArrow::SpawnAndFireArrow()
 
 	if (Arrow)
 	{
-		Arrow->InitVelocity(FireDirection, FirePower);
+		Arrow->InitVelocity(FireDirection, InFirePower, InProjectileGravityPower);
 		Arrow->GetCollisionComponent()->IgnoreActorWhenMoving(AvatarActor, true);
 	}
+	DrawDebugLine(GetWorld(), CameraLocation, TraceEnd, FColor::Red, false, 2.0f);
+	DrawDebugLine(GetWorld(), MuzzleLocation, TargetPoint, FColor::Green, false, 2.0f);
 }

@@ -25,12 +25,15 @@ public:
 		const FGameplayEventData* TriggerEventData) override;
 
 
-protected:
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Arrow")
 	TSubclassOf<class AFRArrowProjectile> ArrowClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Arrow")
-	float FirePower = 1000.f;
+	float BasicFirePower = 1000.f;
 
-	void SpawnAndFireArrow();
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Arrow")
+	float BasicProjectileGravityPower = 0.5f;
+
+	void SpawnAndFireArrow(float InFirePower, float InProjectileGravityPower);
 };

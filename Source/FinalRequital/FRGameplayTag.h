@@ -9,3 +9,5 @@
 #define FRTAG_CHARACTER_INVISIBLE FGameplayTag::RequestGameplayTag(FName("Character.State.Invisible"))
 
 #define GAMEPLAYCUE_CHARACTER_MELEEATTACKHIT FGameplayTag::RequestGameplayTag(FName("GameplayCue.Character.MeleeAttackHit"))
+#define GAMEPLAYCUE_CHARACTER_ARROWHIT FGameplayTag::RequestGameplayTag(FName("GameplayCue.Character.ArrowHit"))
+#define GAMEPLAYCUE_CHARACTER_BRONZEBELLHIT FGameplayTag::RequestGameplayTag(FName("GameplayCue.Character.BronzeBellHit"))

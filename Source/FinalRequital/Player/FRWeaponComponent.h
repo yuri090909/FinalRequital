@@ -49,6 +49,7 @@ public:
 
 	void EquipWeapon(EWeaponType WeaponType);
 	void ClearWeapon();
+	EWeaponType GetCurrentWeaponType() const { return CurrentWeaponType; }
 
 protected:
 	virtual void BeginPlay() override;
