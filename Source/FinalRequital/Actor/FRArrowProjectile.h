@@ -16,7 +16,7 @@ class FINALREQUITAL_API AFRArrowProjectile : public AActor
 public:	
 	AFRArrowProjectile();
 
-	void InitVelocity(const FVector& Direction, float Speed);
+	void InitVelocity(const FVector& Direction, float Speed, float ProjectileGravity);
 
 	//class UProjectileMovementComponent* AFRArrowProjectile::GetProjectileMovement() const;
 public:
@@ -34,6 +34,7 @@ protected:
 	// 데미지 전달용 GE 클래스
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Damage")
 	TSubclassOf<class UGameplayEffect> DamageEffectClass;
+
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Collision")
 	TObjectPtr<class USphereComponent> CollisionComponent;

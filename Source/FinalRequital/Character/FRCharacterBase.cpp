@@ -83,7 +83,18 @@ void AFRCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	}
 }
 
+void AFRCharacterBase::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
 
+	if (FollowCamera)
+	{
+		float TargetFOV = bWantsToZoom ? ZoomedFOV : DefaultFOV;
+		float CurrentFOV = FollowCamera->FieldOfView;
+		float NewFOV = FMath::FInterpTo(CurrentFOV, TargetFOV, DeltaTime, ZoomInterpSpeed);
+		FollowCamera->SetFieldOfView(NewFOV);
+	}
+}
 
 void AFRCharacterBase::Move(const FInputActionValue& Value)
 {
@@ -112,4 +123,9 @@ void AFRCharacterBase::Look(const FInputActionValue& Value)
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
 	}
+}
+
+void AFRCharacterBase::SetZooming(bool bZooming)
+{
+	bWantsToZoom = bZooming;
 }

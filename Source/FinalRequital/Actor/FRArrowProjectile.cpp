@@ -9,8 +9,8 @@
 #include "GameplayEffect.h"
 #include "GameplayEffectTypes.h"
 #include "AbilitySystemGlobals.h"
+#include "FRGameplayTag.h"
 #include "Components/SphereComponent.h"
-
 
 AFRArrowProjectile::AFRArrowProjectile()
 {
@@ -45,11 +45,12 @@ void AFRArrowProjectile::BeginPlay()
 	Super::BeginPlay();
 }
 
-void AFRArrowProjectile::InitVelocity(const FVector& Direction, float Speed)
+void AFRArrowProjectile::InitVelocity(const FVector& Direction, float Speed, float ProjectileGravity)
 {
 	if (ProjectileMovement)
 	{
 		ProjectileMovement->Velocity = Direction * Speed;
+		ProjectileMovement->ProjectileGravityScale = ProjectileGravity;
 	}
 }
 
@@ -80,9 +81,15 @@ void AFRArrowProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherA
 	FGameplayEffectSpecHandle SpecHandle = SourceASC->MakeOutgoingSpec(DamageEffectClass, 1.f, EffectContext);
 	if (SpecHandle.IsValid())
 	{
-		SpecHandle.Data->SetSetByCallerMagnitude(
-			FGameplayTag::RequestGameplayTag(FName("Data.Damage")), 1.f);
+		// GameplayEffect 적용
 		TargetASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data);
+
+		FGameplayCueParameters CueParameters;
+		CueParameters.EffectContext = SpecHandle.Data->GetEffectContext();
+		CueParameters.Location = Hit.ImpactPoint;
+		CueParameters.Normal = Hit.ImpactNormal;
+
+		TargetASC->ExecuteGameplayCue(GAMEPLAYCUE_CHARACTER_ARROWHIT, CueParameters);
 	}
 
 	Destroy();

@@ -20,15 +20,13 @@ public:
 	AFRCharacterBase();
 
 public:
-
-	//FORCEINLINE virtual UAnimMontage* GetComboActionMontage() const { return ComboActionMontage; }
 	FORCEINLINE class UFRMeleeComboData* GetComboActionData() const { return ComboActionData; }
-
 	FORCEINLINE USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	FORCEINLINE UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	virtual void Tick(float DeltaTime) override;
 
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
@@ -61,11 +59,26 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	TArray<TObjectPtr<UInputAction>> QuickSlotActions;
 
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
-	//TObjectPtr<class UAnimMontage> ComboActionMontage;
-
 	//Data Section
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UFRMeleeComboData> ComboActionData;
+
+	// 카메라 줌 관련
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera")
+	float DefaultFOV = 90.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera")
+	float ZoomedFOV = 65.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera")
+	float ZoomInterpSpeed = 10.0f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
+	bool bWantsToZoom = false;
+
+public:
+	// 줌 상태 설정 함수
+	void SetZooming(bool bZooming);
 
 };
